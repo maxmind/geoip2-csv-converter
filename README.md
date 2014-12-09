@@ -20,8 +20,26 @@ Required:
 In addition, at least one of these is required:
 
 * -include-cidr - Include the network in CIDR format
-* -include-integer-range - Include the IP range of the network in integer format
 * -include-range - Include the IP range of the network in string format
+* -include-integer-range - Include the IP range of the network in integer format
+
+Output
+======
+
+### CIDR (-include-cidr)
+
+This will include the network in CIDR notation in the `network` column as it
+is in the original CSV.
+
+### Range (-include-range)
+
+This adds `network_start_ip` and `network_last_ip` columns. These
+are string representations of the first and last IP address in the network.
+
+### Integer Range (-include-integer-range)
+
+This adds `network_start_integer` and `network_last_integer` columns. These
+are integer representations of the first and last IP address in the network.
 
 Copyright and License
 =====================

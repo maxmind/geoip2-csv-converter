@@ -94,7 +94,7 @@ func cidrLine(network ipaddr.Prefix, orig []string) []string {
 }
 
 func rangeHeader(orig []string) []string {
-	return append([]string{"start_ip", "end_ip"}, orig...)
+	return append([]string{"network_start_ip", "network_last_ip"}, orig...)
 }
 
 func rangeLine(network ipaddr.Prefix, orig []string) []string {
@@ -105,7 +105,7 @@ func rangeLine(network ipaddr.Prefix, orig []string) []string {
 }
 
 func intRangeHeader(orig []string) []string {
-	return append([]string{"start_integer", "end_integer"}, orig...)
+	return append([]string{"network_start_integer", "network_last_integer"}, orig...)
 }
 
 func intRangeLine(network ipaddr.Prefix, orig []string) []string {

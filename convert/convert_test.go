@@ -39,7 +39,7 @@ func TestRange(t *testing.T) {
 	checkHeader(
 		t,
 		rangeHeader,
-		[]string{"start_ip", "end_ip"},
+		[]string{"network_start_ip", "network_last_ip"},
 	)
 
 	checkLine(
@@ -61,7 +61,7 @@ func TestIntRange(t *testing.T) {
 	checkHeader(
 		t,
 		intRangeHeader,
-		[]string{"start_integer", "end_integer"},
+		[]string{"network_start_integer", "network_last_integer"},
 	)
 
 	checkLine(
@@ -138,7 +138,7 @@ func TestRangeOutput(t *testing.T) {
 		true,
 		false,
 		[]interface{}{
-			"start_ip,end_ip",
+			"network_start_ip,network_last_ip",
 			"1.0.0.0,1.0.0.255",
 			"4.69.140.16,4.69.140.23",
 			"5.61.192.0,5.61.199.255",
@@ -157,7 +157,7 @@ func TestIntRangeOutput(t *testing.T) {
 		false,
 		true,
 		[]interface{}{
-			"start_integer,end_integer",
+			"network_start_integer,network_last_integer",
 			"16777216,16777471",
 			"71666704,71666711",
 			"87932928,87934975",
@@ -176,7 +176,7 @@ func TestAllOutput(t *testing.T) {
 		true,
 		true,
 		[]interface{}{
-			"network,start_ip,end_ip,start_integer,end_integer",
+			"network,network_start_ip,network_last_ip,network_start_integer,network_last_integer",
 			"1.0.0.0/24,1.0.0.0,1.0.0.255,16777216,16777471",
 			"4.69.140.16/29,4.69.140.16,4.69.140.23,71666704,71666711",
 			"5.61.192.0/21,5.61.192.0,5.61.199.255,87932928,87934975",
@@ -233,7 +233,7 @@ func TestFileWriting(t *testing.T) {
 1.0.0.0/24,"some more"
 `
 
-	expected := `network,start_ip,end_ip,start_integer,end_integer,something
+	expected := `network,network_start_ip,network_last_ip,network_start_integer,network_last_integer,something
 1.0.0.0/24,1.0.0.0,1.0.0.255,16777216,16777471,some more
 `
 
