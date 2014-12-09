@@ -210,20 +210,21 @@ func checkOutput(
 		t.Fatal(err)
 	}
 
+	// This is a regexp as Go 1.4 does not quote empty fields while earlier
+	// versions do
 	outTMPL := `%s,geoname_id,registered_country_geoname_id,represented_country_geoname_id,is_anonymous_proxy,is_satellite_provider
-%s,2077456,2077456,"",0,0
-%s,6252001,6252001,"",0,0
-%s,2635167,2635167,"",0,0
-%s,357994,357994,"",0,0
-%s,1227603,1227603,"",0,0
-%s,1835841,1835841,"",0,0
+%s,2077456,2077456,(?:"")?,0,0
+%s,6252001,6252001,(?:"")?,0,0
+%s,2635167,2635167,(?:"")?,0,0
+%s,357994,357994,(?:"")?,0,0
+%s,1227603,1227603,(?:"")?,0,0
+%s,1835841,1835841,(?:"")?,0,0
 `
 
-	assert.Equal(
+	assert.Regexp(
 		t,
 		fmt.Sprintf(outTMPL, expected...),
 		outbuf.String(),
-		"expected CSV for "+name,
 	)
 }
 
