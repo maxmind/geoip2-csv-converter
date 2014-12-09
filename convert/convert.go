@@ -13,20 +13,25 @@ import (
 type headerFunc func([]string) []string
 type lineFunc func(ipaddr.Prefix, []string) []string
 
+// ConvertFile converts the MaxMind GeoIP2 or GeoLite2 CSV file `inputFile` to
+// `outputFile` file using a different representation of the network. The
+// representation can be specified by setting one or more of `cidr`,
+// `ipRange`, or `intRange` to true. If none of these are set to true, it will
+// strip off the network information.
 func ConvertFile(
-	input string,
-	output string,
+	inputFile string,
+	outputFile string,
 	cidr bool,
 	ipRange bool,
 	intRange bool,
 ) error {
-	outFile, err := os.Create(output)
+	outFile, err := os.Create(outputFile)
 	if err != nil {
 		return err
 	}
 	defer outFile.Close()
 
-	inFile, err := os.Open(input)
+	inFile, err := os.Open(inputFile)
 	if err != nil {
 		return err
 	}
@@ -35,6 +40,10 @@ func ConvertFile(
 	return Convert(inFile, outFile, cidr, ipRange, intRange)
 }
 
+// Convert writes the MaxMind GeoIP2 or GeoLite2 CSV in the `input` io.Reader
+// to the Writer `output` using the network represenation specified by setting
+// `cidr`, ipRange`, or `intRange` to true. If none of these are set to true,
+// it will strip off the network information.
 func Convert(
 	input io.Reader,
 	output io.Writer,
