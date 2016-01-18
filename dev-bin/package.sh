@@ -30,4 +30,5 @@ do
 done
 
 git tag -a $VERSION
-git push -u --tags
+git push --tags
+git push -u
