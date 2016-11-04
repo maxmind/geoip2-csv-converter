@@ -165,10 +165,7 @@ func convert(
 	}
 
 	writer.Flush()
-	if err := writer.Error(); err != nil {
-		return err
-	}
-	return nil
+	return writer.Error()
 }
 
 func makePrefix(network string) (*ipaddr.Prefix, error) {
