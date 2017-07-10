@@ -25,19 +25,34 @@ func ConvertFile(
 	ipRange bool,
 	intRange bool,
 ) error {
-	outFile, err := os.Create(outputFile)
-	if err != nil {
-		return err
-	}
-	defer outFile.Close()
+	var (
+		outWriter io.Writer
+		inReader  io.Reader
+	)
 
-	inFile, err := os.Open(inputFile)
-	if err != nil {
-		return err
+	if outputFile == "" {
+		outWriter = os.Stdout
+	} else {
+		outFile, err := os.Create(outputFile)
+		if err != nil {
+			return err
+		}
+		outWriter = outFile
+		defer outFile.Close()
 	}
-	defer inFile.Close()
 
-	return Convert(inFile, outFile, cidr, ipRange, intRange)
+	if inputFile == "" {
+		inReader = os.Stdin
+	} else {
+		inFile, err := os.Open(inputFile)
+		if err != nil {
+			return err
+		}
+		inReader = inFile
+		defer inFile.Close()
+	}
+
+	return Convert(inReader, outWriter, cidr, ipRange, intRange)
 }
 
 // Convert writes the MaxMind GeoIP2 or GeoLite2 CSV in the `input` io.Reader
