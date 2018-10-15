@@ -16,13 +16,13 @@ notifications:
     rooms:
       secure: "KGRKISvv9xOe/oGh28gSN6h+IALUTPAkqjkV4zq2yV5QuTmyvm24LBG5GbMAZB9sEcLaOFwOBB7hg8GLKj46Ae3wV2TxBlaSY62N888C080zGlQFxNlF5z281Dsk71zKoHhxYgq9K6VSmmIU8LFcmY+M0jBJzsoAnANBjjGGl9s=\n"
 before_install:
-  - "if [[ $RUN_SNYK ]]; then sudo apt-get install -y nodejs; fi"
-  - "if [[ $RUN_SNYK ]]; then npm install -g snyk; fi"
+  - "if [[ $RUN_SNYK && $SNYK_TOKEN ]]; then sudo apt-get install -y nodejs; fi"
+  - "if [[ $RUN_SNYK && $SNYK_TOKEN ]]; then npm install -g snyk; fi"
 install:
   - go get -t ./...
-  - "if [[ $RUN_SNYK ]]; then snyk test --org=maxmind; fi"
+  - "if [[ $RUN_SNYK && $SNYK_TOKEN ]]; then snyk test --org=maxmind; fi"
 after_success:
-  - "if [[ $TRAVIS_BRANCH == 'master' && $TRAVIS_PULL_REQUEST == 'false' && $RUN_SNYK ]]; then snyk monitor --org=maxmind --project-name=maxmind/geoip2-csv-converter; fi"
+  - "if [[ $TRAVIS_BRANCH == 'master' && $TRAVIS_PULL_REQUEST == 'false' && $RUN_SNYK && $SNYK_TOKEN ]]; then snyk monitor --org=maxmind --project-name=maxmind/geoip2-csv-converter; fi"
 env:
   global:
     secure: "b5M6hkol2NU0QkTVGj/oxoCU3LoVJEd3t+fECkOHXZqvUXkcxOXVF1L36TyPThnStkdJkCvqjiUo3Km5ga+q8R9plCfTqKNLHCsZlEYQgTxOV3ob1nk+PjRgI8jRQpYtOGGTybtx3FpNh+/T795jXmEhktMK0idCJ/ESoQvMhvs="
