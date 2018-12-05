@@ -62,5 +62,5 @@ func printHelp(errors []string) {
 		fmt.Fprintln(flag.CommandLine.Output(), message)
 	}
 
-	flag.PrintDefaults()
+	flag.Usage()
 }
