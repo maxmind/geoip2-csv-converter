@@ -45,6 +45,7 @@ func main() {
 	err := convert.ConvertFile(*input, *output, *cidr, *ipRange, *intRange)
 	if err != nil {
 		fmt.Fprintf(flag.CommandLine.Output(), "Error: %v\n", err)
+		os.Exit(1)
 	}
 }
 
