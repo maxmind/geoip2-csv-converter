@@ -29,7 +29,7 @@ func main() {
 	}
 
 	if !*ipRange && !*intRange && !*cidr {
-		errors = append(errors, "At least one of -include-* param is required")
+		errors = append(errors, "-include-cidr, -include-range, or -include-integer-range is required")
 	}
 
 	args := flag.Args()
