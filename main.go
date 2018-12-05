@@ -4,6 +4,7 @@ import (
 	"flag"
 	"fmt"
 	"os"
+	"strings"
 
 	"github.com/maxmind/geoip2-csv-converter/convert"
 )
@@ -29,6 +30,11 @@ func main() {
 
 	if !*ipRange && !*intRange && !*cidr {
 		errors = append(errors, "At least one of -include-* param is required")
+	}
+
+	args := flag.Args()
+	if len(args) > 0 {
+		errors = append(errors, "unknown argument(s): "+strings.Join(args, ", "))
 	}
 
 	if len(errors) != 0 {
