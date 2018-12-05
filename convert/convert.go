@@ -41,7 +41,7 @@ func ConvertFile(
 }
 
 // Convert writes the MaxMind GeoIP2 or GeoLite2 CSV in the `input` io.Reader
-// to the Writer `output` using the network represenation specified by setting
+// to the Writer `output` using the network representation specified by setting
 // `cidr`, ipRange`, or `intRange` to true. If none of these are set to true,
 // it will strip off the network information.
 func Convert(
