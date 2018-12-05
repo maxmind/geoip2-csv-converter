@@ -161,7 +161,10 @@ func convert(
 		if err != nil {
 			return err
 		}
-		writer.Write(makeLine(p, record[1:]))
+		err = writer.Write(makeLine(p, record[1:]))
+		if err != nil {
+			return err
+		}
 	}
 
 	writer.Flush()
