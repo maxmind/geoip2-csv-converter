@@ -8,6 +8,7 @@ import (
 	"os"
 
 	"github.com/mikioh/ipaddr"
+	"github.com/pkg/errors"
 )
 
 type headerFunc func([]string) []string
@@ -27,13 +28,13 @@ func ConvertFile(
 ) error {
 	outFile, err := os.Create(outputFile)
 	if err != nil {
-		return err
+		return errors.Wrapf(err, "error creating output file (%s)", outputFile)
 	}
 	defer outFile.Close()
 
 	inFile, err := os.Open(inputFile)
 	if err != nil {
-		return err
+		return errors.Wrapf(err, "error opening input file (%s)", inputFile)
 	}
 	defer inFile.Close()
 
@@ -41,7 +42,7 @@ func ConvertFile(
 }
 
 // Convert writes the MaxMind GeoIP2 or GeoLite2 CSV in the `input` io.Reader
-// to the Writer `output` using the network represenation specified by setting
+// to the Writer `output` using the network representation specified by setting
 // `cidr`, ipRange`, or `intRange` to true. If none of these are set to true,
 // it will strip off the network information.
 func Convert(
@@ -140,13 +141,13 @@ func convert(
 
 	header, err := reader.Read()
 	if err != nil {
-		return err
+		return errors.Wrap(err, "error reading CSV header")
 	}
 
 	newHeader := makeHeader(header[1:])
 	err = writer.Write(newHeader)
 	if err != nil {
-		return err
+		return errors.Wrap(err, "error writing CSV header")
 	}
 
 	for {
@@ -154,24 +155,27 @@ func convert(
 		if err == io.EOF {
 			break
 		} else if err != nil {
-			return err
+			return errors.Wrap(err, "error reading CSV")
 		}
 
 		p, err := makePrefix(record[0])
 		if err != nil {
 			return err
 		}
-		writer.Write(makeLine(p, record[1:]))
+		err = writer.Write(makeLine(p, record[1:]))
+		if err != nil {
+			return errors.Wrap(err, "error writing CSV")
+		}
 	}
 
 	writer.Flush()
-	return writer.Error()
+	return errors.Wrap(writer.Error(), "error writing CSV")
 }
 
 func makePrefix(network string) (*ipaddr.Prefix, error) {
 	_, ipn, err := net.ParseCIDR(network)
 	if err != nil {
-		return nil, err
+		return nil, errors.Wrapf(err, "error parsing network (%s)", network)
 	}
 	return ipaddr.NewPrefix(ipn), nil
 }
