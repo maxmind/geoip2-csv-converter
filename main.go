@@ -49,8 +49,18 @@ func main() {
 }
 
 func printHelp(errors []string) {
+	var passedFlags []string
+	flag.Visit(func(f *flag.Flag) {
+		passedFlags = append(passedFlags, "-"+f.Name)
+	})
+
+	if len(passedFlags) > 0 {
+		errors = append(errors, "flags passed: "+strings.Join(passedFlags, ", "))
+	}
+
 	for _, message := range errors {
 		fmt.Fprintln(flag.CommandLine.Output(), message)
 	}
+
 	flag.PrintDefaults()
 }
