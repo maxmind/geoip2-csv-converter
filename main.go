@@ -3,65 +3,38 @@ package main
 import (
 	"flag"
 	"fmt"
-	"os"
-	"strings"
 
 	"github.com/maxmind/geoip2-csv-converter/convert"
 )
 
 func main() {
-	input := flag.String("block-file", "", "The path to the block CSV file to use as input (REQUIRED)")
-	output := flag.String("output-file", "", "The path to the output CSV (REQUIRED)")
+	required := "REQUIRED"
+	input := flag.String("block-file", required, "The path to the block CSV file to use as input")
+	output := flag.String("output-file", required, "The path to the output CSV")
 	ipRange := flag.Bool("include-range", false, "Include the IP range of the network in string format")
 	intRange := flag.Bool("include-integer-range", false, "Include the IP range of the network in integer format")
 	cidr := flag.Bool("include-cidr", false, "Include the network in CIDR format")
 
 	flag.Parse()
 
-	var errors []string
-
-	if *input == "" {
-		errors = append(errors, "-block-file is required")
-	}
-
-	if *output == "" {
-		errors = append(errors, "-output-file is required")
+	if *input == required || *output == required {
+		printHelp()
+		return
 	}
 
 	if !*ipRange && !*intRange && !*cidr {
-		errors = append(errors, "-include-cidr, -include-range, or -include-integer-range is required")
-	}
-
-	args := flag.Args()
-	if len(args) > 0 {
-		errors = append(errors, "unknown argument(s): "+strings.Join(args, ", "))
-	}
-
-	if len(errors) != 0 {
-		printHelp(errors)
-		os.Exit(1)
+		printHelp()
+		return
 	}
 
 	err := convert.ConvertFile(*input, *output, *cidr, *ipRange, *intRange)
 	if err != nil {
-		fmt.Fprintf(flag.CommandLine.Output(), "Error: %v\n", err)
-		os.Exit(1)
+		fmt.Printf("Error: %v\n", err)
 	}
 }
 
-func printHelp(errors []string) {
-	var passedFlags []string
-	flag.Visit(func(f *flag.Flag) {
-		passedFlags = append(passedFlags, "-"+f.Name)
-	})
+func printHelp() {
+	flag.PrintDefaults()
+	fmt.Println("\nAt least one of -include-* param is required")
 
-	if len(passedFlags) > 0 {
-		errors = append(errors, "flags passed: "+strings.Join(passedFlags, ", "))
-	}
-
-	for _, message := range errors {
-		fmt.Fprintln(flag.CommandLine.Output(), message)
-	}
-
-	flag.Usage()
 }
