@@ -11,11 +11,11 @@
 
 [[projects]]
   branch = "master"
-  digest = "1:1cf9298399ee987b39e824c68eae06c6d74ba646f4a8908646aa5af2b614c27c"
+  digest = "1:749961c2b398db88bc4b8d4e6f6ca9888b308bd925e83dc9046a3b591b9cdd21"
   name = "github.com/mikioh/ipaddr"
   packages = ["."]
   pruneopts = "UT"
-  revision = "d9961065b564c8981f7f32d2dadba1db61818bef"
+  revision = "d465c8ab672111787b24b8f03326449059a4aa33"
 
 [[projects]]
   digest = "1:40e195917a951a8bf867cd05de2a46aaf1806c50cf92eebf4c16f78cd196f747"
