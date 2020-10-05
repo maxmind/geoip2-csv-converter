@@ -9,6 +9,7 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 )
 
 func TestCIDR(t *testing.T) {
@@ -75,8 +76,10 @@ func TestIntRange(t *testing.T) {
 		t,
 		intRangeLine,
 		"2001:0db8:85a3:0042::/64",
-		[]string{"42540766452641155289225172512357220352",
-			"42540766452641155307671916586066771967"},
+		[]string{
+			"42540766452641155289225172512357220352",
+			"42540766452641155307671916586066771967",
+		},
 	)
 }
 
@@ -84,7 +87,6 @@ func checkHeader(
 	t *testing.T,
 	makeHeader headerFunc,
 	expected []string) {
-
 	suffix := []string{"city", "country"}
 	assert.Equal(
 		t,
@@ -180,8 +182,11 @@ func TestAllOutput(t *testing.T) {
 			"1.0.0.0/24,1.0.0.0,1.0.0.255,16777216,16777471",
 			"4.69.140.16/29,4.69.140.16,4.69.140.23,71666704,71666711",
 			"5.61.192.0/21,5.61.192.0,5.61.199.255,87932928,87934975",
+			// nolint: lll
 			"2001:4220::/32,2001:4220::,2001:4220:ffff:ffff:ffff:ffff:ffff:ffff,42541829336310884227257139937291534336,42541829415539046741521477530835484671",
+			// nolint: lll
 			"2402:d000::/32,2402:d000::,2402:d000:ffff:ffff:ffff:ffff:ffff:ffff,47866811183171600627242296191018336256,47866811262399763141506633784562286591",
+			// nolint: lll
 			"2406:4000::/32,2406:4000::,2406:4000:ffff:ffff:ffff:ffff:ffff:ffff,47884659703622814097215369772150030336,47884659782850976611479707365693980671",
 		},
 	)
@@ -195,6 +200,7 @@ func checkOutput(
 	intRange bool,
 	expected []interface{},
 ) {
+	// nolint: lll
 	input := `network,geoname_id,registered_country_geoname_id,represented_country_geoname_id,is_anonymous_proxy,is_satellite_provider
 1.0.0.0/24,2077456,2077456,,0,0
 4.69.140.16/29,6252001,6252001,,0,0
@@ -212,6 +218,7 @@ func checkOutput(
 
 	// This is a regexp as Go 1.4 does not quote empty fields while earlier
 	// versions do
+	// nolint: lll
 	outTMPL := `%s,geoname_id,registered_country_geoname_id,represented_country_geoname_id,is_anonymous_proxy,is_satellite_provider
 %s,2077456,2077456,(?:"")?,0,0
 %s,6252001,6252001,(?:"")?,0,0
@@ -225,6 +232,7 @@ func checkOutput(
 		t,
 		fmt.Sprintf(outTMPL, expected...),
 		outbuf.String(),
+		name,
 	)
 }
 
@@ -241,15 +249,16 @@ func TestFileWriting(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	defer inFile.Close()
+	defer inFile.Close() // nolint: gosec
 
 	outFile, err := ioutil.TempFile("", "output")
 	if err != nil {
 		t.Fatal(err)
 	}
-	defer outFile.Close()
+	defer outFile.Close() // nolint: gosec
 
-	inFile.WriteString(input)
+	_, err = inFile.WriteString(input)
+	require.NoError(t, err)
 
 	err = ConvertFile(inFile.Name(), outFile.Name(), true, true, true)
 	if err != nil {
@@ -257,7 +266,8 @@ func TestFileWriting(t *testing.T) {
 	}
 
 	buf := bytes.NewBuffer(nil)
-	io.Copy(buf, outFile)
+	_, err = io.Copy(buf, outFile)
+	require.NoError(t, err)
 
 	assert.Equal(t, expected, buf.String())
 }
