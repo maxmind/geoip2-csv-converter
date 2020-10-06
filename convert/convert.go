@@ -1,3 +1,4 @@
+// Package convert transforms a GeoIP2/GeoLite2 CSV to various formats.
 package convert
 
 import (
@@ -11,15 +12,17 @@ import (
 	"github.com/pkg/errors"
 )
 
-type headerFunc func([]string) []string
-type lineFunc func(*ipaddr.Prefix, []string) []string
+type (
+	headerFunc func([]string) []string
+	lineFunc   func(*ipaddr.Prefix, []string) []string
+)
 
 // ConvertFile converts the MaxMind GeoIP2 or GeoLite2 CSV file `inputFile` to
 // `outputFile` file using a different representation of the network. The
 // representation can be specified by setting one or more of `cidr`,
 // `ipRange`, or `intRange` to true. If none of these are set to true, it will
 // strip off the network information.
-func ConvertFile(
+func ConvertFile( // nolint: golint
 	inputFile string,
 	outputFile string,
 	cidr bool,
@@ -30,13 +33,13 @@ func ConvertFile(
 	if err != nil {
 		return errors.Wrapf(err, "error creating output file (%s)", outputFile)
 	}
-	defer outFile.Close()
+	defer outFile.Close() // nolint: gosec
 
-	inFile, err := os.Open(inputFile)
+	inFile, err := os.Open(inputFile) // nolint: gosec
 	if err != nil {
 		return errors.Wrapf(err, "error opening input file (%s)", inputFile)
 	}
-	defer inFile.Close()
+	defer inFile.Close() // nolint: gosec
 
 	return Convert(inFile, outFile, cidr, ipRange, intRange)
 }
@@ -52,7 +55,6 @@ func Convert(
 	ipRange bool,
 	intRange bool,
 ) error {
-
 	makeHeader := func(orig []string) []string { return orig }
 	makeLine := func(_ *ipaddr.Prefix, orig []string) []string { return orig }
 
@@ -74,13 +76,13 @@ func Convert(
 	return convert(input, output, makeHeader, makeLine)
 }
 
-func addHeaderFunc(first headerFunc, second headerFunc) headerFunc {
+func addHeaderFunc(first, second headerFunc) headerFunc {
 	return func(header []string) []string {
 		return second(first(header))
 	}
 }
 
-func addLineFunc(first lineFunc, second lineFunc) lineFunc {
+func addLineFunc(first, second lineFunc) lineFunc {
 	return func(network *ipaddr.Prefix, line []string) []string {
 		return second(network, first(network, line))
 	}
