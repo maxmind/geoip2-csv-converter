@@ -41,7 +41,15 @@ func ConvertFile( // nolint: golint
 	}
 	defer inFile.Close() // nolint: gosec
 
-	return Convert(inFile, outFile, cidr, ipRange, intRange)
+	err = Convert(inFile, outFile, cidr, ipRange, intRange)
+	if err != nil {
+		return err
+	}
+	err = outFile.Sync()
+	if err != nil {
+		return errors.Wrapf(err, "error syncing file (%s)", outputFile)
+	}
+	return nil
 }
 
 // Convert writes the MaxMind GeoIP2 or GeoLite2 CSV in the `input` io.Reader
