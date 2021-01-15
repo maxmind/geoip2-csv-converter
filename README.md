@@ -42,7 +42,7 @@ are string representations of the first and last IP address in the network.
 This adds `network_start_integer` and `network_last_integer` columns. These
 are integer representations of the first and last IP address in the network.
 
-### Integer Range (-include-hex-range)
+### Hex Range (-include-hex-range)
 
 This adds `network_start_hex` and `network_last_hex` columns. These
 are hexadecimal representations of the first and last IP address in the network.
