@@ -14,6 +14,7 @@ func main() {
 	output := flag.String("output-file", "", "The path to the output CSV (REQUIRED)")
 	ipRange := flag.Bool("include-range", false, "Include the IP range of the network in string format")
 	intRange := flag.Bool("include-integer-range", false, "Include the IP range of the network in integer format")
+	hexRange := flag.Bool("include-hex-range", false, "Include the IP range of the network in hexadecimal format")
 	cidr := flag.Bool("include-cidr", false, "Include the network in CIDR format")
 
 	flag.Parse()
@@ -28,8 +29,8 @@ func main() {
 		errors = append(errors, "-output-file is required")
 	}
 
-	if !*ipRange && !*intRange && !*cidr {
-		errors = append(errors, "-include-cidr, -include-range, or -include-integer-range is required")
+	if !*ipRange && !*intRange && !*cidr && !*hexRange {
+		errors = append(errors, "-include-cidr, -include-range, -include-integer-range or -include-hex-range is required")
 	}
 
 	args := flag.Args()
@@ -42,7 +43,7 @@ func main() {
 		os.Exit(1)
 	}
 
-	err := convert.ConvertFile(*input, *output, *cidr, *ipRange, *intRange)
+	err := convert.ConvertFile(*input, *output, *cidr, *ipRange, *intRange, *hexRange)
 	if err != nil {
 		fmt.Fprintf(flag.CommandLine.Output(), "Error: %v\n", err)
 		os.Exit(1)

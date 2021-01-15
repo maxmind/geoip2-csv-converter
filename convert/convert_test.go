@@ -83,6 +83,31 @@ func TestIntRange(t *testing.T) {
 	)
 }
 
+func TestHexRange(t *testing.T) {
+	checkHeader(
+		t,
+		hexRangeHeader,
+		[]string{"network_start_hex", "network_last_hex"},
+	)
+
+	checkLine(
+		t,
+		hexRangeLine,
+		"1.1.1.0/24",
+		[]string{"1010100", "10101ff"},
+	)
+
+	checkLine(
+		t,
+		hexRangeLine,
+		"2001:0db8:85a3:0042::/64",
+		[]string{
+			"20010db885a300420000000000000000",
+			"20010db885a30042ffffffffffffffff",
+		},
+	)
+}
+
 func checkHeader(
 	t *testing.T,
 	makeHeader headerFunc,
@@ -120,6 +145,7 @@ func TestCIDROutput(t *testing.T) {
 		true,
 		false,
 		false,
+		false,
 		[]interface{}{
 			"network",
 			"1.0.0.0/24",
@@ -138,6 +164,7 @@ func TestRangeOutput(t *testing.T) {
 		"range only",
 		false,
 		true,
+		false,
 		false,
 		[]interface{}{
 			"network_start_ip,network_last_ip",
@@ -158,6 +185,7 @@ func TestIntRangeOutput(t *testing.T) {
 		false,
 		false,
 		true,
+		false,
 		[]interface{}{
 			"network_start_integer,network_last_integer",
 			"16777216,16777471",
@@ -170,6 +198,26 @@ func TestIntRangeOutput(t *testing.T) {
 	)
 }
 
+func TestHexRangeOutput(t *testing.T) {
+	checkOutput(
+		t,
+		"hex range only",
+		false,
+		false,
+		false,
+		true,
+		[]interface{}{
+			"network_start_hex,network_last_hex",
+			"1000000,10000ff",
+			"4458c10,4458c17",
+			"53dc000,53dc7ff",
+			"20014220000000000000000000000000,20014220ffffffffffffffffffffffff",
+			"2402d000000000000000000000000000,2402d000ffffffffffffffffffffffff",
+			"24064000000000000000000000000000,24064000ffffffffffffffffffffffff",
+		},
+	)
+}
+
 func TestAllOutput(t *testing.T) {
 	checkOutput(
 		t,
@@ -177,17 +225,18 @@ func TestAllOutput(t *testing.T) {
 		true,
 		true,
 		true,
+		true,
 		[]interface{}{
-			"network,network_start_ip,network_last_ip,network_start_integer,network_last_integer",
-			"1.0.0.0/24,1.0.0.0,1.0.0.255,16777216,16777471",
-			"4.69.140.16/29,4.69.140.16,4.69.140.23,71666704,71666711",
-			"5.61.192.0/21,5.61.192.0,5.61.199.255,87932928,87934975",
+			"network,network_start_ip,network_last_ip,network_start_integer,network_last_integer,network_start_hex,network_last_hex",
+			"1.0.0.0/24,1.0.0.0,1.0.0.255,16777216,16777471,1000000,10000ff",
+			"4.69.140.16/29,4.69.140.16,4.69.140.23,71666704,71666711,4458c10,4458c17",
+			"5.61.192.0/21,5.61.192.0,5.61.199.255,87932928,87934975,53dc000,53dc7ff",
 			// nolint: lll
-			"2001:4220::/32,2001:4220::,2001:4220:ffff:ffff:ffff:ffff:ffff:ffff,42541829336310884227257139937291534336,42541829415539046741521477530835484671",
+			"2001:4220::/32,2001:4220::,2001:4220:ffff:ffff:ffff:ffff:ffff:ffff,42541829336310884227257139937291534336,42541829415539046741521477530835484671,20014220000000000000000000000000,20014220ffffffffffffffffffffffff",
 			// nolint: lll
-			"2402:d000::/32,2402:d000::,2402:d000:ffff:ffff:ffff:ffff:ffff:ffff,47866811183171600627242296191018336256,47866811262399763141506633784562286591",
+			"2402:d000::/32,2402:d000::,2402:d000:ffff:ffff:ffff:ffff:ffff:ffff,47866811183171600627242296191018336256,47866811262399763141506633784562286591,2402d000000000000000000000000000,2402d000ffffffffffffffffffffffff",
 			// nolint: lll
-			"2406:4000::/32,2406:4000::,2406:4000:ffff:ffff:ffff:ffff:ffff:ffff,47884659703622814097215369772150030336,47884659782850976611479707365693980671",
+			"2406:4000::/32,2406:4000::,2406:4000:ffff:ffff:ffff:ffff:ffff:ffff,47884659703622814097215369772150030336,47884659782850976611479707365693980671,24064000000000000000000000000000,24064000ffffffffffffffffffffffff",
 		},
 	)
 }
@@ -198,6 +247,7 @@ func checkOutput(
 	cidr bool,
 	ipRange bool,
 	intRange bool,
+	hexRange bool,
 	expected []interface{},
 ) {
 	// nolint: lll
@@ -211,7 +261,7 @@ func checkOutput(
 `
 	var outbuf bytes.Buffer
 
-	err := Convert(strings.NewReader(input), &outbuf, cidr, ipRange, intRange)
+	err := Convert(strings.NewReader(input), &outbuf, cidr, ipRange, intRange, hexRange)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -241,8 +291,8 @@ func TestFileWriting(t *testing.T) {
 1.0.0.0/24,"some more"
 `
 
-	expected := `network,network_start_ip,network_last_ip,network_start_integer,network_last_integer,something
-1.0.0.0/24,1.0.0.0,1.0.0.255,16777216,16777471,some more
+	expected := `network,network_start_ip,network_last_ip,network_start_integer,network_last_integer,network_start_hex,network_last_hex,something
+1.0.0.0/24,1.0.0.0,1.0.0.255,16777216,16777471,1000000,10000ff,some more
 `
 
 	inFile, err := ioutil.TempFile("", "input")
@@ -260,7 +310,7 @@ func TestFileWriting(t *testing.T) {
 	_, err = inFile.WriteString(input)
 	require.NoError(t, err)
 
-	err = ConvertFile(inFile.Name(), outFile.Name(), true, true, true)
+	err = ConvertFile(inFile.Name(), outFile.Name(), true, true, true, true)
 	if err != nil {
 		t.Fatal(err)
 	}
