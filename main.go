@@ -30,7 +30,7 @@ func main() {
 	}
 
 	if !*ipRange && !*intRange && !*cidr && !*hexRange {
-		errors = append(errors, "-include-cidr, -include-range, -include-integer-range" +
+		errors = append(errors, "-include-cidr, -include-range, -include-integer-range"+
 			" or -include-hex-range is required")
 	}
 
