@@ -227,6 +227,7 @@ func TestAllOutput(t *testing.T) {
 		true,
 		true,
 		[]interface{}{
+			// nolint: lll
 			"network,network_start_ip,network_last_ip,network_start_integer,network_last_integer,network_start_hex,network_last_hex",
 			"1.0.0.0/24,1.0.0.0,1.0.0.255,16777216,16777471,1000000,10000ff",
 			"4.69.140.16/29,4.69.140.16,4.69.140.23,71666704,71666711,4458c10,4458c17",
@@ -291,6 +292,7 @@ func TestFileWriting(t *testing.T) {
 1.0.0.0/24,"some more"
 `
 
+	// nolint: lll
 	expected := `network,network_start_ip,network_last_ip,network_start_integer,network_last_integer,network_start_hex,network_last_hex,something
 1.0.0.0/24,1.0.0.0,1.0.0.255,16777216,16777471,1000000,10000ff,some more
 `
