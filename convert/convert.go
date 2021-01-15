@@ -20,7 +20,7 @@ type (
 // ConvertFile converts the MaxMind GeoIP2 or GeoLite2 CSV file `inputFile` to
 // `outputFile` file using a different representation of the network. The
 // representation can be specified by setting one or more of `cidr`,
-// `ipRange`, or `intRange` to true. If none of these are set to true, it will
+// `ipRange`, `intRange` or `hexRange` to true. If none of these are set to true, it will
 // strip off the network information.
 func ConvertFile( // nolint: golint
 	inputFile string,
@@ -28,6 +28,7 @@ func ConvertFile( // nolint: golint
 	cidr bool,
 	ipRange bool,
 	intRange bool,
+	hexRange bool,
 ) error {
 	outFile, err := os.Create(outputFile)
 	if err != nil {
@@ -41,7 +42,7 @@ func ConvertFile( // nolint: golint
 	}
 	defer inFile.Close() // nolint: gosec
 
-	err = Convert(inFile, outFile, cidr, ipRange, intRange)
+	err = Convert(inFile, outFile, cidr, ipRange, intRange, hexRange)
 	if err != nil {
 		return err
 	}
@@ -62,9 +63,15 @@ func Convert(
 	cidr bool,
 	ipRange bool,
 	intRange bool,
+	hexRange bool,
 ) error {
 	makeHeader := func(orig []string) []string { return orig }
 	makeLine := func(_ *ipaddr.Prefix, orig []string) []string { return orig }
+
+	if hexRange {
+		makeHeader = addHeaderFunc(makeHeader, hexRangeHeader)
+		makeLine = addLineFunc(makeLine, hexRangeLine)
+	}
 
 	if intRange {
 		makeHeader = addHeaderFunc(makeHeader, intRangeHeader)
@@ -129,6 +136,24 @@ func intRangeLine(network *ipaddr.Prefix, orig []string) []string {
 
 	return append(
 		[]string{startInt.String(), endInt.String()},
+		orig...,
+	)
+}
+
+func hexRangeHeader(orig []string) []string {
+	return append([]string{"network_start_hex", "network_last_hex"}, orig...)
+}
+
+func hexRangeLine(network *ipaddr.Prefix, orig []string) []string {
+	startInt := new(big.Int)
+
+	startInt.SetBytes(canonicalizeIP(network.IP))
+
+	endInt := new(big.Int)
+	endInt.SetBytes(canonicalizeIP(network.Last()))
+
+	return append(
+		[]string{startInt.Text(16), endInt.Text(16)},
 		orig...,
 	)
 }
