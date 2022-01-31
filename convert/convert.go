@@ -7,6 +7,7 @@ import (
 	"math/big"
 	"net"
 	"os"
+	"path/filepath"
 
 	"github.com/mikioh/ipaddr"
 	"github.com/pkg/errors"
@@ -22,7 +23,7 @@ type (
 // representation can be specified by setting one or more of `cidr`,
 // `ipRange`, `intRange` or `hexRange` to true. If none of these are set to true, it will
 // strip off the network information.
-func ConvertFile( // nolint: golint
+func ConvertFile( //nolint: revive // stutters, should fix
 	inputFile string,
 	outputFile string,
 	cidr bool,
@@ -30,7 +31,7 @@ func ConvertFile( // nolint: golint
 	intRange bool,
 	hexRange bool,
 ) error {
-	outFile, err := os.Create(outputFile)
+	outFile, err := os.Create(filepath.Clean(outputFile))
 	if err != nil {
 		return errors.Wrapf(err, "error creating output file (%s)", outputFile)
 	}
