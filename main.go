@@ -29,6 +29,10 @@ func main() {
 		errors = append(errors, "-output-file is required")
 	}
 
+	if *input != "" && *output != "" && *output == *input {
+		errors = append(errors, "Your output file must be different than your block file(input file).")
+	}
+
 	if !*ipRange && !*intRange && !*cidr && !*hexRange {
 		errors = append(errors, "-include-cidr, -include-range, -include-integer-range,"+
 			" or -include-hex-range is required")
