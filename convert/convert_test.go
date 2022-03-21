@@ -111,7 +111,8 @@ func TestHexRange(t *testing.T) {
 func checkHeader(
 	t *testing.T,
 	makeHeader headerFunc,
-	expected []string) {
+	expected []string,
+) {
 	suffix := []string{"city", "country"}
 	assert.Equal(
 		t,
@@ -124,7 +125,8 @@ func checkLine(
 	t *testing.T,
 	makeLine lineFunc,
 	network string,
-	expected []string) {
+	expected []string,
+) {
 	p, err := makePrefix(network)
 	if err != nil {
 		t.Fatal(err)
