@@ -35,13 +35,13 @@ func ConvertFile( //nolint: revive // stutters, should fix
 	if err != nil {
 		return errors.Wrapf(err, "error creating output file (%s)", outputFile)
 	}
-	defer outFile.Close() // nolint: gosec
+	defer outFile.Close() //nolint: gosec
 
-	inFile, err := os.Open(inputFile) // nolint: gosec
+	inFile, err := os.Open(inputFile) //nolint: gosec
 	if err != nil {
 		return errors.Wrapf(err, "error opening input file (%s)", inputFile)
 	}
-	defer inFile.Close() // nolint: gosec
+	defer inFile.Close() //nolint: gosec
 
 	err = Convert(inFile, outFile, cidr, ipRange, intRange, hexRange)
 	if err != nil {
