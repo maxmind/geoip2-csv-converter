@@ -4,7 +4,7 @@ import (
 	"bytes"
 	"fmt"
 	"io"
-	"io/ioutil"
+	"os"
 	"strings"
 	"testing"
 
@@ -299,13 +299,13 @@ func TestFileWriting(t *testing.T) {
 1.0.0.0/24,1.0.0.0,1.0.0.255,16777216,16777471,1000000,10000ff,some more
 `
 
-	inFile, err := ioutil.TempFile("", "input")
+	inFile, err := os.CreateTemp("", "input")
 	if err != nil {
 		t.Fatal(err)
 	}
 	defer inFile.Close() //nolint: gosec
 
-	outFile, err := ioutil.TempFile("", "output")
+	outFile, err := os.CreateTemp("", "output")
 	if err != nil {
 		t.Fatal(err)
 	}
