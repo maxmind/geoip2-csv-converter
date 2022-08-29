@@ -6,7 +6,6 @@
   disable-all = true
   enable = [
     "bodyclose",
-    "deadcode",
     "depguard",
     "errcheck",
     "exhaustive",
@@ -29,13 +28,11 @@
     # "safesql",
     "sqlclosecheck",
     "staticcheck",
-    "structcheck",
     "stylecheck",
     "typecheck",
     "unconvert",
     "unparam",
     "unused",
-    "varcheck",
     "vetshadow",
   ]
 
