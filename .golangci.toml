@@ -520,9 +520,8 @@
     # [[linters-settings.revive.rules]]
     # name = "unused-receiver"
 
-    # This probably makes sense after we upgrade to 1.18
-    # [[linters-settings.revive.rules]]
-    # name = "use-any"
+    [[linters-settings.revive.rules]]
+    name = "use-any"
 
     [[linters-settings.revive.rules]]
     name = "useless-break"
