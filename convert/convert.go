@@ -3,11 +3,13 @@ package convert
 
 import (
 	"encoding/csv"
+	"encoding/hex"
 	"fmt"
 	"io"
 	"math/big"
 	"net/netip"
 	"os"
+	"strings"
 
 	"go4.org/netipx"
 )
@@ -145,17 +147,17 @@ func hexRangeHeader(orig []string) []string {
 }
 
 func hexRangeLine(network netip.Prefix, orig []string) []string {
-	startInt := new(big.Int)
-
-	startInt.SetBytes(network.Addr().AsSlice())
-
-	endInt := new(big.Int)
-	endInt.SetBytes(netipx.PrefixLastIP(network).AsSlice())
-
 	return append(
-		[]string{startInt.Text(16), endInt.Text(16)},
+		[]string{
+			toHex(network.Addr()),
+			toHex(netipx.PrefixLastIP(network)),
+		},
 		orig...,
 	)
+}
+
+func toHex(ip netip.Addr) string {
+	return strings.TrimPrefix(hex.EncodeToString(ip.AsSlice()), "0")
 }
 
 func convert(
