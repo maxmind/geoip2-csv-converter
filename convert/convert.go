@@ -9,7 +9,6 @@ import (
 	"net/netip"
 	"os"
 
-	"github.com/pkg/errors"
 	"go4.org/netipx"
 )
 
@@ -33,13 +32,13 @@ func ConvertFile( // nolint: golint
 ) error {
 	outFile, err := os.Create(outputFile)
 	if err != nil {
-		return errors.Wrapf(err, "error creating output file (%s)", outputFile)
+		return fmt.Errorf("creating output file (%s): %w", outputFile, err)
 	}
 	defer outFile.Close() // nolint: gosec
 
 	inFile, err := os.Open(inputFile) // nolint: gosec
 	if err != nil {
-		return errors.Wrapf(err, "error opening input file (%s)", inputFile)
+		return fmt.Errorf("opening input file (%s): %w", inputFile, err)
 	}
 	defer inFile.Close() // nolint: gosec
 
@@ -49,7 +48,7 @@ func ConvertFile( // nolint: golint
 	}
 	err = outFile.Sync()
 	if err != nil {
-		return errors.Wrapf(err, "error syncing file (%s)", outputFile)
+		return fmt.Errorf("syncing file (%s): %w", outputFile, err)
 	}
 	return nil
 }
@@ -170,13 +169,13 @@ func convert(
 
 	header, err := reader.Read()
 	if err != nil {
-		return errors.Wrap(err, "error reading CSV header")
+		return fmt.Errorf("reading CSV header: %w", err)
 	}
 
 	newHeader := makeHeader(header[1:])
 	err = writer.Write(newHeader)
 	if err != nil {
-		return errors.Wrap(err, "error writing CSV header")
+		return fmt.Errorf("writing CSV header: %w", err)
 	}
 
 	for {
@@ -184,7 +183,7 @@ func convert(
 		if err == io.EOF {
 			break
 		} else if err != nil {
-			return errors.Wrap(err, "error reading CSV")
+			return fmt.Errorf("reading CSV: %w", err)
 		}
 
 		p, err := makePrefix(record[0])
@@ -193,18 +192,18 @@ func convert(
 		}
 		err = writer.Write(makeLine(p, record[1:]))
 		if err != nil {
-			return errors.Wrap(err, "error writing CSV")
+			return fmt.Errorf("writing CSV: %w", err)
 		}
 	}
 
 	writer.Flush()
-	return errors.Wrap(writer.Error(), "error writing CSV")
+	return nil
 }
 
 func makePrefix(network string) (netip.Prefix, error) {
 	prefix, err := netip.ParsePrefix(network)
 	if err != nil {
-		return prefix, fmt.Errorf("error parsing network (%s): %w", err)
+		return prefix, fmt.Errorf("parsing network (%s): %w", network, err)
 	}
 	return prefix, nil
 }
