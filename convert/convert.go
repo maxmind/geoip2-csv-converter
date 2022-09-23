@@ -4,11 +4,13 @@ package convert
 import (
 	"encoding/csv"
 	"encoding/hex"
+	"errors"
 	"fmt"
 	"io"
 	"math/big"
 	"net/netip"
 	"os"
+	"path/filepath"
 	"strings"
 
 	"go4.org/netipx"
@@ -24,7 +26,7 @@ type (
 // representation can be specified by setting one or more of `cidr`,
 // `ipRange`, `intRange` or `hexRange` to true. If none of these are set to true, it will
 // strip off the network information.
-func ConvertFile( // nolint: golint
+func ConvertFile( //nolint: revive // too late to change name
 	inputFile string,
 	outputFile string,
 	cidr bool,
@@ -32,25 +34,34 @@ func ConvertFile( // nolint: golint
 	intRange bool,
 	hexRange bool,
 ) error {
-	outFile, err := os.Create(outputFile)
+	outFile, err := os.Create(filepath.Clean(outputFile))
 	if err != nil {
 		return fmt.Errorf("creating output file (%s): %w", outputFile, err)
 	}
-	defer outFile.Close() // nolint: gosec
 
-	inFile, err := os.Open(inputFile) // nolint: gosec
+	inFile, err := os.Open(filepath.Clean(inputFile))
 	if err != nil {
+		outFile.Close()
 		return fmt.Errorf("opening input file (%s): %w", inputFile, err)
 	}
-	defer inFile.Close() // nolint: gosec
 
 	err = Convert(inFile, outFile, cidr, ipRange, intRange, hexRange)
 	if err != nil {
+		inFile.Close()
+		outFile.Close()
 		return err
 	}
 	err = outFile.Sync()
 	if err != nil {
+		inFile.Close()
+		outFile.Close()
 		return fmt.Errorf("syncing file (%s): %w", outputFile, err)
+	}
+	if err := inFile.Close(); err != nil {
+		return fmt.Errorf("closing file (%s): %w", inputFile, err)
+	}
+	if err := outFile.Close(); err != nil {
+		return fmt.Errorf("closing file (%s): %w", outputFile, err)
 	}
 	return nil
 }
@@ -182,7 +193,7 @@ func convert(
 
 	for {
 		record, err := reader.Read()
-		if err == io.EOF {
+		if errors.Is(err, io.EOF) {
 			break
 		} else if err != nil {
 			return fmt.Errorf("reading CSV: %w", err)
