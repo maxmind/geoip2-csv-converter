@@ -3,19 +3,22 @@ package convert
 
 import (
 	"encoding/csv"
+	"encoding/hex"
+	"errors"
+	"fmt"
 	"io"
 	"math/big"
-	"net"
+	"net/netip"
 	"os"
 	"path/filepath"
+	"strings"
 
-	"github.com/mikioh/ipaddr"
-	"github.com/pkg/errors"
+	"go4.org/netipx"
 )
 
 type (
 	headerFunc func([]string) []string
-	lineFunc   func(*ipaddr.Prefix, []string) []string
+	lineFunc   func(netip.Prefix, []string) []string
 )
 
 // ConvertFile converts the MaxMind GeoIP2 or GeoLite2 CSV file `inputFile` to
@@ -23,7 +26,7 @@ type (
 // representation can be specified by setting one or more of `cidr`,
 // `ipRange`, `intRange` or `hexRange` to true. If none of these are set to true, it will
 // strip off the network information.
-func ConvertFile( //nolint: revive // stutters, should fix
+func ConvertFile( //nolint: revive // too late to change name
 	inputFile string,
 	outputFile string,
 	cidr bool,
@@ -33,23 +36,32 @@ func ConvertFile( //nolint: revive // stutters, should fix
 ) error {
 	outFile, err := os.Create(filepath.Clean(outputFile))
 	if err != nil {
-		return errors.Wrapf(err, "error creating output file (%s)", outputFile)
+		return fmt.Errorf("creating output file (%s): %w", outputFile, err)
 	}
-	defer outFile.Close() //nolint: gosec
 
-	inFile, err := os.Open(inputFile) //nolint: gosec
+	inFile, err := os.Open(filepath.Clean(inputFile))
 	if err != nil {
-		return errors.Wrapf(err, "error opening input file (%s)", inputFile)
+		outFile.Close()
+		return fmt.Errorf("opening input file (%s): %w", inputFile, err)
 	}
-	defer inFile.Close() //nolint: gosec
 
 	err = Convert(inFile, outFile, cidr, ipRange, intRange, hexRange)
 	if err != nil {
+		inFile.Close()
+		outFile.Close()
 		return err
 	}
 	err = outFile.Sync()
 	if err != nil {
-		return errors.Wrapf(err, "error syncing file (%s)", outputFile)
+		inFile.Close()
+		outFile.Close()
+		return fmt.Errorf("syncing file (%s): %w", outputFile, err)
+	}
+	if err := inFile.Close(); err != nil {
+		return fmt.Errorf("closing file (%s): %w", inputFile, err)
+	}
+	if err := outFile.Close(); err != nil {
+		return fmt.Errorf("closing file (%s): %w", outputFile, err)
 	}
 	return nil
 }
@@ -67,7 +79,7 @@ func Convert(
 	hexRange bool,
 ) error {
 	makeHeader := func(orig []string) []string { return orig }
-	makeLine := func(_ *ipaddr.Prefix, orig []string) []string { return orig }
+	makeLine := func(_ netip.Prefix, orig []string) []string { return orig }
 
 	if hexRange {
 		makeHeader = addHeaderFunc(makeHeader, hexRangeHeader)
@@ -99,7 +111,7 @@ func addHeaderFunc(first, second headerFunc) headerFunc {
 }
 
 func addLineFunc(first, second lineFunc) lineFunc {
-	return func(network *ipaddr.Prefix, line []string) []string {
+	return func(network netip.Prefix, line []string) []string {
 		return second(network, first(network, line))
 	}
 }
@@ -108,7 +120,7 @@ func cidrHeader(orig []string) []string {
 	return append([]string{"network"}, orig...)
 }
 
-func cidrLine(network *ipaddr.Prefix, orig []string) []string {
+func cidrLine(network netip.Prefix, orig []string) []string {
 	return append([]string{network.String()}, orig...)
 }
 
@@ -116,9 +128,9 @@ func rangeHeader(orig []string) []string {
 	return append([]string{"network_start_ip", "network_last_ip"}, orig...)
 }
 
-func rangeLine(network *ipaddr.Prefix, orig []string) []string {
+func rangeLine(network netip.Prefix, orig []string) []string {
 	return append(
-		[]string{network.IP.String(), network.Last().String()},
+		[]string{network.Addr().String(), netipx.PrefixLastIP(network).String()},
 		orig...,
 	)
 }
@@ -127,13 +139,13 @@ func intRangeHeader(orig []string) []string {
 	return append([]string{"network_start_integer", "network_last_integer"}, orig...)
 }
 
-func intRangeLine(network *ipaddr.Prefix, orig []string) []string {
+func intRangeLine(network netip.Prefix, orig []string) []string {
 	startInt := new(big.Int)
 
-	startInt.SetBytes(canonicalizeIP(network.IP))
+	startInt.SetBytes(network.Addr().AsSlice())
 
 	endInt := new(big.Int)
-	endInt.SetBytes(canonicalizeIP(network.Last()))
+	endInt.SetBytes(netipx.PrefixLastIP(network).AsSlice())
 
 	return append(
 		[]string{startInt.String(), endInt.String()},
@@ -145,25 +157,18 @@ func hexRangeHeader(orig []string) []string {
 	return append([]string{"network_start_hex", "network_last_hex"}, orig...)
 }
 
-func hexRangeLine(network *ipaddr.Prefix, orig []string) []string {
-	startInt := new(big.Int)
-
-	startInt.SetBytes(canonicalizeIP(network.IP))
-
-	endInt := new(big.Int)
-	endInt.SetBytes(canonicalizeIP(network.Last()))
-
+func hexRangeLine(network netip.Prefix, orig []string) []string {
 	return append(
-		[]string{startInt.Text(16), endInt.Text(16)},
+		[]string{
+			toHex(network.Addr()),
+			toHex(netipx.PrefixLastIP(network)),
+		},
 		orig...,
 	)
 }
 
-func canonicalizeIP(ip net.IP) net.IP {
-	if v4 := ip.To4(); v4 != nil {
-		return v4
-	}
-	return ip
+func toHex(ip netip.Addr) string {
+	return strings.TrimPrefix(hex.EncodeToString(ip.AsSlice()), "0")
 }
 
 func convert(
@@ -177,21 +182,21 @@ func convert(
 
 	header, err := reader.Read()
 	if err != nil {
-		return errors.Wrap(err, "error reading CSV header")
+		return fmt.Errorf("reading CSV header: %w", err)
 	}
 
 	newHeader := makeHeader(header[1:])
 	err = writer.Write(newHeader)
 	if err != nil {
-		return errors.Wrap(err, "error writing CSV header")
+		return fmt.Errorf("writing CSV header: %w", err)
 	}
 
 	for {
 		record, err := reader.Read()
-		if err == io.EOF {
+		if errors.Is(err, io.EOF) {
 			break
 		} else if err != nil {
-			return errors.Wrap(err, "error reading CSV")
+			return fmt.Errorf("reading CSV: %w", err)
 		}
 
 		p, err := makePrefix(record[0])
@@ -200,18 +205,18 @@ func convert(
 		}
 		err = writer.Write(makeLine(p, record[1:]))
 		if err != nil {
-			return errors.Wrap(err, "error writing CSV")
+			return fmt.Errorf("writing CSV: %w", err)
 		}
 	}
 
 	writer.Flush()
-	return errors.Wrap(writer.Error(), "error writing CSV")
+	return nil
 }
 
-func makePrefix(network string) (*ipaddr.Prefix, error) {
-	_, ipn, err := net.ParseCIDR(network)
+func makePrefix(network string) (netip.Prefix, error) {
+	prefix, err := netip.ParsePrefix(network)
 	if err != nil {
-		return nil, errors.Wrapf(err, "error parsing network (%s)", network)
+		return prefix, fmt.Errorf("parsing network (%s): %w", network, err)
 	}
-	return ipaddr.NewPrefix(ipn), nil
+	return prefix, nil
 }

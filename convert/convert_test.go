@@ -148,7 +148,7 @@ func TestCIDROutput(t *testing.T) {
 		false,
 		false,
 		false,
-		[]interface{}{
+		[]any{
 			"network",
 			"1.0.0.0/24",
 			"4.69.140.16/29",
@@ -168,7 +168,7 @@ func TestRangeOutput(t *testing.T) {
 		true,
 		false,
 		false,
-		[]interface{}{
+		[]any{
 			"network_start_ip,network_last_ip",
 			"1.0.0.0,1.0.0.255",
 			"4.69.140.16,4.69.140.23",
@@ -188,7 +188,7 @@ func TestIntRangeOutput(t *testing.T) {
 		false,
 		true,
 		false,
-		[]interface{}{
+		[]any{
 			"network_start_integer,network_last_integer",
 			"16777216,16777471",
 			"71666704,71666711",
@@ -208,7 +208,7 @@ func TestHexRangeOutput(t *testing.T) {
 		false,
 		false,
 		true,
-		[]interface{}{
+		[]any{
 			"network_start_hex,network_last_hex",
 			"1000000,10000ff",
 			"4458c10,4458c17",
@@ -228,7 +228,7 @@ func TestAllOutput(t *testing.T) {
 		true,
 		true,
 		true,
-		[]interface{}{
+		[]any{
 			//nolint: lll
 			"network,network_start_ip,network_last_ip,network_start_integer,network_last_integer,network_start_hex,network_last_hex",
 			"1.0.0.0/24,1.0.0.0,1.0.0.255,16777216,16777471,1000000,10000ff",
@@ -251,7 +251,7 @@ func checkOutput(
 	ipRange bool,
 	intRange bool,
 	hexRange bool,
-	expected []interface{},
+	expected []any,
 ) {
 	//nolint: lll
 	input := `network,geoname_id,registered_country_geoname_id,represented_country_geoname_id,is_anonymous_proxy,is_satellite_provider
@@ -303,13 +303,13 @@ func TestFileWriting(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	defer inFile.Close() //nolint: gosec
+	defer inFile.Close() //nolint: gosec // test
 
 	outFile, err := os.CreateTemp("", "output")
 	if err != nil {
 		t.Fatal(err)
 	}
-	defer outFile.Close() //nolint: gosec
+	defer outFile.Close() //nolint: gosec // test
 
 	_, err = inFile.WriteString(input)
 	require.NoError(t, err)
