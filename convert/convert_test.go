@@ -303,13 +303,13 @@ func TestFileWriting(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	defer inFile.Close() //nolint: gosec // test
+	defer inFile.Close()
 
 	outFile, err := os.CreateTemp("", "output")
 	if err != nil {
 		t.Fatal(err)
 	}
-	defer outFile.Close() //nolint: gosec // test
+	defer outFile.Close()
 
 	_, err = inFile.WriteString(input)
 	require.NoError(t, err)
