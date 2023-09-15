@@ -1,0 +1,54 @@
+project_name: 'geoip2-csv-converter'
+
+builds:
+  - id: 'geoip2-csv-converter'
+    binary: 'geoip2-csv-converter'
+    goos:
+      - 'darwin'
+      - 'linux'
+      - 'windows'
+    ignore:
+      - goos: 'darwin'
+        goarch: '386'
+
+archives:
+  - id: 'geoip2-csv-converter'
+    builds:
+      - 'geoip2-csv-converter'
+    wrap_in_directory: true
+    format_overrides:
+      - goos: windows
+        format: zip
+    files:
+      - 'CHANGELOG.md'
+      - 'LICENSE'
+      - 'README.md'
+
+checksum:
+  name_template: 'checksums.txt'
+
+snapshot:
+  name_template: "{{ .Tag }}-next"
+
+changelog:
+  skip: true
+
+nfpms:
+  - id: 'geoip2-csv-converter'
+    builds:
+      - 'geoip2-csv-converter'
+    vendor: 'MaxMind, Inc.'
+    homepage: 'https://www.maxmind.com/'
+    maintainer: 'MaxMind, Inc. <support@maxmind.com>'
+    description: 'Convert GeoIP2 and GeoLite2 CSVs to different formats.'
+    license: 'Apache 2.0'
+    formats:
+      - 'deb'
+      - 'rpm'
+    contents:
+      - src: CHANGELOG.md
+        dst: /usr/share/doc/geoip2-csv-converter/CHANGELOG.md
+      - src: LICENSE
+        dst: /usr/share/doc/geoip2-csv-converter/LICENSE
+      - src: README.md
+        dst: /usr/share/doc/geoip2-csv-converter/README.md

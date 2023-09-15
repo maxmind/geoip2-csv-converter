@@ -1,5 +1,10 @@
 # CHANGELOG
 
+## 1.4.0
+
+* Use goreleaser to release.
+* Add arm64 architecture builds.
+
 ## 1.3.0 (2021-01-15)
 
 * Added `-include-hex-range` flag. If set, this will include the IP range
