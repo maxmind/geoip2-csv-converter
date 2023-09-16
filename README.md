@@ -5,8 +5,8 @@ This is a simple utility for converting the MaxMind GeoIP2 and GeoLite2 CSVs
 to different formats for representing IP addresses such as IP ranges or
 integer ranges.
 
-Compiled binaries for Linux/x86_64, Windows, and Mac OS X can be downloaded
-from the GitHub releases page.
+Compiled binaries for Linux/x86_64, Windows, and macOS (darwin) can be
+downloaded from the GitHub releases page.
 
 Usage
 =====
@@ -50,6 +50,6 @@ are hexadecimal representations of the first and last IP address in the network.
 Copyright and License
 =====================
 
-This software is Copyright (c) 2014 - 2022 by MaxMind, Inc.
+This software is Copyright (c) 2014 - 2023 by MaxMind, Inc.
 
 This is free software, licensed under the Apache License, Version 2.0.

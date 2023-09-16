@@ -1,10 +1,10 @@
 module github.com/maxmind/geoip2-csv-converter
 
-go 1.18
+go 1.20
 
 require (
 	github.com/stretchr/testify v1.8.4
-	go4.org/netipx v0.0.0-20220922150402-a3c4c4abef03
+	go4.org/netipx v0.0.0-20230824141953-6213f710f925
 )
 
 require (
