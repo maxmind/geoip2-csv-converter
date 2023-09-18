@@ -1,6 +1,6 @@
 # CHANGELOG
 
-## 1.4.0
+## 1.4.0 (2023-09-18)
 
 * Use goreleaser to release.
 * Add arm64 architecture builds.
