@@ -53,6 +53,7 @@ func main() {
 
 	err := convert.ConvertFile(*input, *output, *cidr, *ipRange, *intRange, *hexRange)
 	if err != nil {
+		//nolint:errcheck // We are exiting and there isn't much we can do.
 		fmt.Fprintf(flag.CommandLine.Output(), "Error: %v\n", err)
 		os.Exit(1)
 	}
@@ -69,6 +70,7 @@ func printHelp(errors []string) {
 	}
 
 	for _, message := range errors {
+		//nolint:errcheck // There isn't much to do if we can't print to the output.
 		fmt.Fprintln(flag.CommandLine.Output(), message)
 	}
 
