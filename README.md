@@ -11,7 +11,6 @@ downloaded from the GitHub releases page.
 Usage
 =====
 
-
 Required:
 
 * -block-file=[FILENAME] - The name of the block CSV file to use as input.
