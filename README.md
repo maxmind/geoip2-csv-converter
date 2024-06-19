@@ -11,7 +11,6 @@ downloaded from the GitHub releases page.
 Usage
 =====
 
-
 Required:
 
 * -block-file=[FILENAME] - The name of the block CSV file to use as input.
@@ -50,6 +49,6 @@ are hexadecimal representations of the first and last IP address in the network.
 Copyright and License
 =====================
 
-This software is Copyright (c) 2014 - 2023 by MaxMind, Inc.
+This software is Copyright (c) 2014 - 2024 by MaxMind, Inc.
 
 This is free software, licensed under the Apache License, Version 2.0.
