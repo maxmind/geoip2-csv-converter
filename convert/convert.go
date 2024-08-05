@@ -210,6 +210,11 @@ func convert(
 	}
 
 	writer.Flush()
+
+	if err := writer.Error(); err != nil {
+		return fmt.Errorf("flushing CSV: %w", err)
+	}
+
 	return nil
 }
 
