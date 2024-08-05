@@ -199,11 +199,12 @@ func convert(
 			return fmt.Errorf("reading CSV: %w", err)
 		}
 
-		p, err := makePrefix(record[0])
+		prefix, err := netip.ParsePrefix(record[0])
 		if err != nil {
-			return err
+			return fmt.Errorf("parsing network (%s): %w", record[0], err)
 		}
-		err = writer.Write(makeLine(p, record[1:]))
+
+		err = writer.Write(makeLine(prefix, record[1:]))
 		if err != nil {
 			return fmt.Errorf("writing CSV: %w", err)
 		}
@@ -216,12 +217,4 @@ func convert(
 	}
 
 	return nil
-}
-
-func makePrefix(network string) (netip.Prefix, error) {
-	prefix, err := netip.ParsePrefix(network)
-	if err != nil {
-		return prefix, fmt.Errorf("parsing network (%s): %w", network, err)
-	}
-	return prefix, nil
 }
