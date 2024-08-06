@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"fmt"
 	"io"
+	"net/netip"
 	"os"
 	"strings"
 	"testing"
@@ -127,7 +128,7 @@ func checkLine(
 	network string,
 	expected []string,
 ) {
-	p, err := makePrefix(network)
+	p, err := netip.ParsePrefix(network)
 	if err != nil {
 		t.Fatal(err)
 	}
