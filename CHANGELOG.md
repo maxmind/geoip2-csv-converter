@@ -1,5 +1,9 @@
 # CHANGELOG
 
+## 1.4.1 (2024-08-06)
+
+* The converter now checks for errors after flushing the CSV writer.
+
 ## 1.4.0 (2023-09-18)
 
 * Use goreleaser to release.
