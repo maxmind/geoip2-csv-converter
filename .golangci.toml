@@ -2,7 +2,7 @@
 # This is needed for precious, which may run multiple instances
 # in parallel
 allow-parallel-runners = true
-go = "1.21"
+go = "1.23"
 tests = true
 timeout = "10m"
 
