@@ -13,11 +13,27 @@ import (
 )
 
 func main() {
-	input := flag.String("block-file", "", "The path to the block CSV file to use as input (REQUIRED)")
+	input := flag.String(
+		"block-file",
+		"",
+		"The path to the block CSV file to use as input (REQUIRED)",
+	)
 	output := flag.String("output-file", "", "The path to the output CSV (REQUIRED)")
-	ipRange := flag.Bool("include-range", false, "Include the IP range of the network in string format")
-	intRange := flag.Bool("include-integer-range", false, "Include the IP range of the network in integer format")
-	hexRange := flag.Bool("include-hex-range", false, "Include the IP range of the network in hexadecimal format")
+	ipRange := flag.Bool(
+		"include-range",
+		false,
+		"Include the IP range of the network in string format",
+	)
+	intRange := flag.Bool(
+		"include-integer-range",
+		false,
+		"Include the IP range of the network in integer format",
+	)
+	hexRange := flag.Bool(
+		"include-hex-range",
+		false,
+		"Include the IP range of the network in hexadecimal format",
+	)
 	cidr := flag.Bool("include-cidr", false, "Include the network in CIDR format")
 
 	flag.Parse()
@@ -33,7 +49,10 @@ func main() {
 	}
 
 	if *input != "" && *output != "" && *output == *input {
-		errors = append(errors, "Your output file must be different than your block file(input file).")
+		errors = append(
+			errors,
+			"Your output file must be different than your block file(input file).",
+		)
 	}
 
 	if !*ipRange && !*intRange && !*cidr && !*hexRange {
