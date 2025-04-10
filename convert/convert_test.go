@@ -230,16 +230,12 @@ func TestAllOutput(t *testing.T) {
 		true,
 		true,
 		[]any{
-			//nolint: lll
 			"network,network_start_ip,network_last_ip,network_start_integer,network_last_integer,network_start_hex,network_last_hex",
 			"1.0.0.0/24,1.0.0.0,1.0.0.255,16777216,16777471,1000000,10000ff",
 			"4.69.140.16/29,4.69.140.16,4.69.140.23,71666704,71666711,4458c10,4458c17",
 			"5.61.192.0/21,5.61.192.0,5.61.199.255,87932928,87934975,53dc000,53dc7ff",
-			//nolint: lll
 			"2001:4220::/32,2001:4220::,2001:4220:ffff:ffff:ffff:ffff:ffff:ffff,42541829336310884227257139937291534336,42541829415539046741521477530835484671,20014220000000000000000000000000,20014220ffffffffffffffffffffffff",
-			//nolint: lll
 			"2402:d000::/32,2402:d000::,2402:d000:ffff:ffff:ffff:ffff:ffff:ffff,47866811183171600627242296191018336256,47866811262399763141506633784562286591,2402d000000000000000000000000000,2402d000ffffffffffffffffffffffff",
-			//nolint: lll
 			"2406:4000::/32,2406:4000::,2406:4000:ffff:ffff:ffff:ffff:ffff:ffff,47884659703622814097215369772150030336,47884659782850976611479707365693980671,24064000000000000000000000000000,24064000ffffffffffffffffffffffff",
 		},
 	)
@@ -254,7 +250,6 @@ func checkOutput(
 	hexRange bool,
 	expected []any,
 ) {
-	//nolint: lll
 	input := `network,geoname_id,registered_country_geoname_id,represented_country_geoname_id,is_anonymous_proxy,is_satellite_provider
 1.0.0.0/24,2077456,2077456,,0,0
 4.69.140.16/29,6252001,6252001,,0,0
@@ -272,7 +267,6 @@ func checkOutput(
 
 	// This is a regexp as Go 1.4 does not quote empty fields while earlier
 	// versions do
-	//nolint: lll
 	outTMPL := `%s,geoname_id,registered_country_geoname_id,represented_country_geoname_id,is_anonymous_proxy,is_satellite_provider
 %s,2077456,2077456,(?:"")?,0,0
 %s,6252001,6252001,(?:"")?,0,0
@@ -295,7 +289,6 @@ func TestFileWriting(t *testing.T) {
 1.0.0.0/24,"some more"
 `
 
-	//nolint: lll
 	expected := `network,network_start_ip,network_last_ip,network_start_integer,network_last_integer,network_start_hex,network_last_hex,something
 1.0.0.0/24,1.0.0.0,1.0.0.255,16777216,16777471,1000000,10000ff,some more
 `
