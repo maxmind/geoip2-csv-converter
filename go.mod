@@ -4,7 +4,7 @@ go 1.24
 
 require (
 	github.com/stretchr/testify v1.11.1
-	go4.org/netipx v0.0.0-20230824141953-6213f710f925
+	go4.org/netipx v0.0.0-20231129151722-fdeea329fbba
 )
 
 require (
