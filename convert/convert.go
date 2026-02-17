@@ -34,12 +34,12 @@ func ConvertFile( //nolint: revive // too late to change name
 	intRange bool,
 	hexRange bool,
 ) error {
-	outFile, err := os.Create(filepath.Clean(outputFile))
+	outFile, err := os.Create(filepath.Clean(outputFile)) //nolint:gosec // user-provided path
 	if err != nil {
 		return fmt.Errorf("creating output file (%s): %w", outputFile, err)
 	}
 
-	inFile, err := os.Open(filepath.Clean(inputFile))
+	inFile, err := os.Open(filepath.Clean(inputFile)) //nolint:gosec // user-provided path
 	if err != nil {
 		outFile.Close()
 		return fmt.Errorf("opening input file (%s): %w", inputFile, err)
