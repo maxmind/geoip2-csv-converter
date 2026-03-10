@@ -2,33 +2,33 @@
 
 ## 1.4.1 (2024-08-06)
 
-* The converter now checks for errors after flushing the CSV writer.
+- The converter now checks for errors after flushing the CSV writer.
 
 ## 1.4.0 (2023-09-18)
 
-* Use goreleaser to release.
-* Add arm64 architecture builds.
+- Use goreleaser to release.
+- Add arm64 architecture builds.
 
 ## 1.3.0 (2021-01-15)
 
-* Added `-include-hex-range` flag. If set, this will include the IP range
-  in hexadecimal format. Pull request by Alexander Sinitsyn. GitHub #33.
+- Added `-include-hex-range` flag. If set, this will include the IP range in
+  hexadecimal format. Pull request by Alexander Sinitsyn. GitHub #33.
 
 ## 1.2.0 (2020-12-03)
 
-* The output file is now synced before it is closed and the program exits.
+- The output file is now synced before it is closed and the program exits.
   Requested by orang3-juic3. GitHub #30.
-* Dependencies have been updated.
+- Dependencies have been updated.
 
 ## 1.1.0 (2018-12-06)
 
-* The help output is now improved on errors.
+- The help output is now improved on errors.
 
 ## 1.0.0 (2016-11-04)
 
-* Compiled with Go 1.7.3. This fixes issues on macOS Sierra. Closes #6.
-* Updated to new version of github.com/mikioh/ipaddr
+- Compiled with Go 1.7.3. This fixes issues on macOS Sierra. Closes #6.
+- Updated to new version of github.com/mikioh/ipaddr
 
 ## 0.0.1 (2014-12-09)
 
-* Initial release.
+- Initial release.
