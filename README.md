@@ -1,6 +1,6 @@
-## GeoIP2 CSV Format Converter
+## GeoIP CSV Format Converter
 
-This is a simple utility for converting the MaxMind GeoIP2 and GeoLite2 CSVs to
+This is a simple utility for converting the MaxMind GeoIP and GeoLite CSVs to
 different formats for representing IP addresses such as IP ranges or integer
 ranges.
 

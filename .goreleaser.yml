@@ -41,7 +41,7 @@ nfpms:
     vendor: 'MaxMind, Inc.'
     homepage: 'https://www.maxmind.com/'
     maintainer: 'MaxMind, Inc. <support@maxmind.com>'
-    description: 'Convert GeoIP2 and GeoLite2 CSVs to different formats.'
+    description: 'Convert GeoIP and GeoLite CSVs to different formats.'
     license: 'Apache 2.0'
     formats:
       - 'deb'

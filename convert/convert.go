@@ -1,4 +1,4 @@
-// Package convert transforms a GeoIP2/GeoLite2 CSV to various formats.
+// Package convert transforms a GeoIP/GeoLite CSV to various formats.
 package convert
 
 import (
@@ -21,7 +21,7 @@ type (
 	lineFunc   func(netip.Prefix, []string) []string
 )
 
-// ConvertFile converts the MaxMind GeoIP2 or GeoLite2 CSV file `inputFile` to
+// ConvertFile converts the MaxMind GeoIP or GeoLite CSV file `inputFile` to
 // `outputFile` file using a different representation of the network. The
 // representation can be specified by setting one or more of `cidr`,
 // `ipRange`, `intRange` or `hexRange` to true. If none of these are set to true, it will
@@ -66,7 +66,7 @@ func ConvertFile( //nolint: revive // too late to change name
 	return nil
 }
 
-// Convert writes the MaxMind GeoIP2 or GeoLite2 CSV in the `input` io.Reader
+// Convert writes the MaxMind GeoIP or GeoLite CSV in the `input` io.Reader
 // to the Writer `output` using the network representation specified by setting
 // `cidr`, ipRange`, or `intRange` to true. If none of these are set to true,
 // it will strip off the network information.

@@ -1,5 +1,5 @@
-// geoip2-csv-converter is a utility for converting the MaxMind GeoIP2 and
-// GeoLite2 CSVs to different formats for representing IP addresses such as IP
+// geoip2-csv-converter is a utility for converting the MaxMind GeoIP and
+// GeoLite CSVs to different formats for representing IP addresses such as IP
 // ranges or integer ranges.
 package main
 
