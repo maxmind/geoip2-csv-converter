@@ -5,6 +5,8 @@ builds:
   - id: 'geoip2-csv-converter'
     env:
       - 'CGO_ENABLED=0'
+    flags:
+      - '-trimpath'
     binary: 'geoip2-csv-converter'
     goos:
       - 'darwin'
