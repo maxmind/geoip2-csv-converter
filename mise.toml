@@ -10,6 +10,7 @@ go = "latest"
 lychee = "latest"
 "github:golangci/golangci-lint" = "latest"
 "github:houseabsolute/precious" = "latest"
+"github:goreleaser/goreleaser" = "latest"
 node = "latest"
 "npm:prettier" = "latest"
 
