@@ -1,5 +1,17 @@
 # CHANGELOG
 
+## 1.5.0 (2026-11-12)
+
+- The release binaries are built with the current Go release. The 1.4.1 binaries
+  used Go 1.22.5, which has known standard-library vulnerabilities.
+- The macOS binaries now require macOS 13 Ventura or later, and the Linux
+  binaries require Linux kernel 3.2 or later.
+- The Linux amd64 binary is now statically linked. The 1.4.1 binary required
+  glibc 2.34 or later.
+- Updated `go4.org/netipx` to its latest version.
+- Go 1.25 or later is now required to build from source. Version 1.4.1 required
+  Go 1.20.
+
 ## 1.4.1 (2024-08-06)
 
 - The converter now checks for errors after flushing the CSV writer.
