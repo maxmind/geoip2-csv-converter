@@ -1,6 +1,6 @@
 # CHANGELOG
 
-## 1.5.0
+## 1.5.0 (2026-11-12)
 
 - The release binaries are built with the current Go release. The 1.4.1 binaries
   used Go 1.22.5, which has known standard-library vulnerabilities.
