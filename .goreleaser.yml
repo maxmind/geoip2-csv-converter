@@ -3,6 +3,8 @@ version: 2
 
 builds:
   - id: 'geoip2-csv-converter'
+    env:
+      - 'CGO_ENABLED=0'
     binary: 'geoip2-csv-converter'
     goos:
       - 'darwin'

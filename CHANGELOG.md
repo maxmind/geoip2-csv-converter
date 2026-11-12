@@ -6,6 +6,8 @@
   used Go 1.22.5, which has known standard-library vulnerabilities.
 - The macOS binaries now require macOS 13 Ventura or later, and the Linux
   binaries require Linux kernel 3.2 or later.
+- The Linux amd64 binary is now statically linked. The 1.4.1 binary required
+  glibc 2.34 or later.
 - Updated `go4.org/netipx` to its latest version.
 - Go 1.25 or later is now required to build from source. Version 1.4.1 required
   Go 1.20.
