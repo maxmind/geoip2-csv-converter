@@ -16,12 +16,13 @@ builds:
 
 archives:
   - id: 'geoip2-csv-converter'
-    builds:
+    ids:
       - 'geoip2-csv-converter'
     wrap_in_directory: true
     format_overrides:
       - goos: windows
-        format: zip
+        formats:
+          - zip
     files:
       - 'CHANGELOG.md'
       - 'LICENSE'
@@ -31,14 +32,14 @@ checksum:
   name_template: 'checksums.txt'
 
 snapshot:
-  name_template: "{{ .Tag }}-next"
+  version_template: "{{ .Tag }}-next"
 
 changelog:
   disable: true
 
 nfpms:
   - id: 'geoip2-csv-converter'
-    builds:
+    ids:
       - 'geoip2-csv-converter'
     vendor: 'MaxMind, Inc.'
     homepage: 'https://www.maxmind.com/'
